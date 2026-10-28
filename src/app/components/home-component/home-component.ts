@@ -8,16 +8,25 @@ import { ServiceDepartamentos } from '../../services/service.departamentos';
   styleUrl: './home-component.css',
   templateUrl: './home-component.html',
 })
-export class HomeComponent implements OnInit{
+export class HomeComponent implements OnInit {
   public departamentos!: Array<Departamento>;
 
   constructor(
     private _service: ServiceDepartamentos,
-    private _cdr: ChangeDetectorRef
-  ){}
+    private _cdr: ChangeDetectorRef,
+  ) {}
+
+  async deleteDepartamento(id: number): Promise<void> {
+    let response = await this._service.deleteDepartamento(id);
+    await this.loadDepartamentos();
+  }
+
+  async loadDepartamentos(): Promise<void> {
+    this.departamentos = await this._service.getDepartamentosAsync();
+    this._cdr.detectChanges();
+  }
 
   async ngOnInit(): Promise<void> {
-      this.departamentos = await this._service.getDepartamentosAsync();
-      this._cdr.detectChanges();
+    await this.loadDepartamentos();
   }
 }
